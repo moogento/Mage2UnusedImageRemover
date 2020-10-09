@@ -4,6 +4,7 @@
 		<arguments>
 			<argument name="commands" xsi:type="array">
 				<item name="imageclean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\Imageclean</item>
+				<item name="imagecorruptedclean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\ImageCorruptedClean</item>
 			</argument>
 		</arguments>
 	</type>

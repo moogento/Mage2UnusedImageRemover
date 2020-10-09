@@ -54,6 +54,16 @@ Run and delete images
 bin/magento ekouk:cleanimages -d
 ```
 
+Run in check only mode which will report the number and size in Mb of CORRUPTED images
+```
+bin/magento ekouk:cleancorruptedimages
+```
+
+Run and delete CORRUPTED images
+```
+bin/magento ekouk:cleancorruptedimages -d
+```
+
 Notes
 -----
 
