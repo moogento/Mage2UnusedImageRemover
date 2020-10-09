@@ -14,19 +14,19 @@ Add the following to your Magento2 composer.json repositories section:-
 "repositories": [
    {
      "type": "vcs",
-     "url": "https://github.com/cannycookie/Mage2UnusedImageRemover"
+     "url": "https://github.com/moogento/Mage2UnusedImageRemover"
    }
  ],
 ```
 Then run
 ```
-composer require ekouk/imagecleaner "dev-master"
+composer require ekouk/imagecleaner "dev-corrupted"
 ```
 
 or add
 
 ```
-"ekouk/imagecleaner": "dev-master"
+"ekouk/imagecleaner": "dev-corrupted"
 ```
 
 to the require section of your `composer.json` file and run ``composer install``
