@@ -54,22 +54,22 @@ bin/magento cache:flush
 Usage
 -----
 
-Run in check only mode which will report the number and size in Mb of unused images
+Run in check only mode which will report the number and size in Mb of unused images:
 ```
 bin/magento ekouk:cleanimages
 ```
 
-Run and delete images
+Run and delete images:
 ```
 bin/magento ekouk:cleanimages -d
 ```
 
-Run in check only mode which will report the number and size in Mb of CORRUPTED images
+Run in check only mode which will report the number and size in Mb of <strong>corrupted</strong> images:
 ```
 bin/magento ekouk:cleancorruptedimages
 ```
 
-Run and delete CORRUPTED images
+Run and delete <strong>corrupted</strong> images:
 ```
 bin/magento ekouk:cleancorruptedimages -d
 ```
