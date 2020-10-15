@@ -8,7 +8,13 @@ Installation
 
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
-Add the following to your Magento2 composer.json repositories section:-
+Add to your Magento2 composer.json repositories section, via running:
+
+```
+composer config repositories.moogento vcs https://github.com/moogento/Mage2UnusedImageRemover
+```
+
+or adding:
 
 ```
 "repositories": [
@@ -18,22 +24,26 @@ Add the following to your Magento2 composer.json repositories section:-
    }
  ],
 ```
-Then run
+
+Then run:
+
 ```
-composer require ekouk/imagecleaner "dev-corrupted"
+composer require ekouk/imagecleaner:dev-corrupted
 ```
 
-or add
+or add:
 
 ```
 "ekouk/imagecleaner": "dev-corrupted"
 ```
 
-to the require section of your `composer.json` file and run ``composer install``
+to the require section of your `composer.json` file.
 
-Once the files have been installed to vendor/ekouk/imagecleaner
+Then run ``composer install``.
 
-Enable the module:-
+Once the files have been installed to vendor/ekouk/imagecleaner,
+
+enable the module:-
 
 ```
 bin/magento setup:upgrade
