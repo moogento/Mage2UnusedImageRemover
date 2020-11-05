@@ -8,7 +8,13 @@ Installation
 
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
-Add the following to your Magento2 composer.json repositories section:-
+Add to your Magento2 composer.json repositories section, via running:
+
+```
+composer config repositories.moogento vcs https://github.com/moogento/Mage2UnusedImageRemover
+```
+
+or adding:
 
 ```
 "repositories": [
@@ -18,22 +24,26 @@ Add the following to your Magento2 composer.json repositories section:-
    }
  ],
 ```
-Then run
+
+Then run:
+
 ```
-composer require ekouk/imagecleaner "dev-corrupted"
+composer require ekouk/imagecleaner:dev-corrupted
 ```
 
-or add
+or add:
 
 ```
 "ekouk/imagecleaner": "dev-corrupted"
 ```
 
-to the require section of your `composer.json` file and run ``composer install``
+to the require section of your `composer.json` file.
 
-Once the files have been installed to vendor/ekouk/imagecleaner
+Then run ``composer install``.
 
-Enable the module:-
+Once the files have been installed to vendor/ekouk/imagecleaner,
+
+enable the module:-
 
 ```
 bin/magento setup:upgrade
@@ -44,32 +54,32 @@ bin/magento cache:flush
 Usage
 -----
 
-Run in check only mode which will report the number and size in Mb of unused images
+Run in check only mode which will report the number and size in Mb of unused images:
 ```
 bin/magento ekouk:cleanimages
 ```
 
-Run and delete images
+Run and delete images:
 ```
 bin/magento ekouk:cleanimages -d
 ```
 
-Run in check only mode which will report the number and size in Mb of CORRUPTED images in pub/media/catalog/product folder
+Run in check only mode which will report the number and size in Mb of <strong>corrupted</strong> images in pub/media/catalog/product folder:
 ```
 bin/magento ekouk:cleancorruptedimages
 ```
 
-Run in check only mode which will show files that are not image type
+Run in check only mode which will show files that are not image type:
 ```
 bin/magento ekouk:cleancorruptedimages -s
 ```
 
-Run in check only mode which will report the number and size in Mb of CORRUPTED images in pub/media folder
+Run in check only mode which will report the number and size in Mb of <strong>corrupted</strong> images in pub/media folder:
 ```
 bin/magento ekouk:cleancorruptedimages -s
 ```
 
-Run and delete CORRUPTED images
+Run and delete <strong>corrupted</strong> images:
 ```
 bin/magento ekouk:cleancorruptedimages -d
 ```
