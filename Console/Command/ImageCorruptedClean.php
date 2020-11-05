@@ -36,6 +36,8 @@ class ImageCorruptedClean extends Command
 
     const DELETE_MODE = "Delete Mode";
     const LIST_MODE = "List Mode";
+    const SHOW_NOT_IMAGE_TYPE = "Show Not Image Type";
+    const IMAGE_DIR = "Image Dir";
     const ALLOWED_FILE_TYPES = ['jpg','jpeg','png'];
 
     protected $io;
@@ -44,6 +46,7 @@ class ImageCorruptedClean extends Command
     protected $resourceConnection;
     protected $imagesPath;
     protected $deleteMode;
+    protected $showNotImageType;
     protected $db;
 
     public function __construct(
@@ -69,7 +72,8 @@ class ImageCorruptedClean extends Command
 
         $this->deleteMode = $input->getOption(self::DELETE_MODE);
         $this->listMode = $input->getOption(self::LIST_MODE);
-        $this->imagesPath = $this->getCatalogDir();
+        $this->imagesPath = $this->getDir($input->getOption(self::IMAGE_DIR));
+        $this->showNotImageType = $input->getOption(self::SHOW_NOT_IMAGE_TYPE);
 
         $output->writeln("Checking Files In Directory: ".$this->imagesPath);
         $localImages = $this->getCorruptedImagesFromDirectoryRecursive($this->imagesPath);
@@ -111,6 +115,15 @@ class ImageCorruptedClean extends Command
                             }
                         }
                     }
+
+                    if ($this->showNotImageType) {
+                        if (!$this->endsWith(strtolower($path),'png')
+                            && !$this->endsWith(strtolower($path),'jpg')
+                            && !$this->endsWith(strtolower($path),'jpeg')) {
+                            var_dump($path);
+                        }
+                    }
+
                     if(!$match) unset($directoryContents[$key]);
                 } else if($path != "." && $path != ".." ){
                     $this->getCorruptedImagesFromDirectoryRecursive($path,$results);
@@ -129,8 +142,11 @@ class ImageCorruptedClean extends Command
         return (substr($haystack, -$length) === $needle);
     }
 
-    protected function getCatalogDir()
+    protected function getDir($all = false)
     {
+        if ($all) {
+            return $this->directoryList->getPath('media').'/';
+        }
         return $this->directoryList->getPath('media').'/catalog/product/';
     }
 
@@ -173,7 +189,9 @@ class ImageCorruptedClean extends Command
         $this->setDescription("Removes unused images from pub/media/catalog");
         $this->setDefinition([
             new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
-            new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode")
+            new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode"),
+            new InputOption(self::SHOW_NOT_IMAGE_TYPE, "-s", InputOption::VALUE_NONE, self::IMAGE_DIR),
+            new InputOption(self::IMAGE_DIR, "-p", InputOption::VALUE_NONE, self::IMAGE_DIR)
         ]);
         parent::configure();
     }
