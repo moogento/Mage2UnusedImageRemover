@@ -3,21 +3,21 @@
  * Inspired by jeroenvermeulen Clean Images.
  *
  * End-User License Agreement (EULA) of EkoUK/ImageCleaner
- * 
+ *
  * License Grant
- * 
+ *
  * EKO UK LTD hereby grants you a personal, non-transferable, non-exclusive licence to use the EkoUK/ImageCleaner software on your devices in accordance with the terms of this EULA agreement.
- * 
+ *
  * You are permitted to load the EkoUK/ImageCleaner software (for example a PC, laptop, mobile or tablet) under your control. You are responsible for ensuring your device meets the minimum requirements of the EkoUK/ImageCleaner software.
- * 
+ *
  * You are not permitted to:
- * 
+ *
  * - Edit, alter, modify, adapt, translate or otherwise change the whole or any part of the Software nor permit the whole or any part of the Software to be combined with or become incorporated in any other software, nor decompile, disassemble or reverse engineer the Software or attempt to do any such things
  * - Reproduce, copy, distribute, resell or otherwise use the Software for any commercial purpose
  * - Allow any third party to use the Software on behalf of or for the benefit of any third party
  * - Use the Software in any way which breaches any applicable local, national or international law
  * - Use the Software for any purpose that EKO UK LTD considers is a breach of this EULA agreement
- * 
+ *
  * Full License may be found here: https://www.ekouk.com/software-end-user-licence-agreement/
  */
 
@@ -31,11 +31,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ResourceConnection;
 
-class Imageclean extends Command
+class CatalogImageClean extends Command
 {
 
     const DELETE_MODE = "Delete Mode";
-    const LIST_MODE = "List Mode";    
+    const LIST_MODE = "List Mode";
     const ALLOWED_FILE_TYPES = ['jpg','jpeg','png'];
 
     protected $io;
@@ -76,9 +76,9 @@ class Imageclean extends Command
         $localImages = $this->getImagesFromDirectoryRecursive($this->imagesPath);
         $output->writeln("Found ".count($localImages)." local image files");
 
-        $dbImages = $this->getImagesFromDatabase();
+        $dbImages = $this->getImagesFromDatabase($output);
 
-        $deleteList = $this->createListToDelete($localImages,$dbImages);
+        $deleteList = $this->createListToDelete($localImages,$dbImages,$output);
 
         if($this->deleteMode){
             $output->writeln("Deleting Files");
@@ -96,7 +96,7 @@ class Imageclean extends Command
     }
 
 
-    private function getImagesFromDatabase()
+    private function getImagesFromDatabase($ouput)
     {
         $galleryImages = $this->getGalleryImages();
         $productImages = $this->getProductImages();
@@ -104,7 +104,7 @@ class Imageclean extends Command
 
         $databaseImages = array_unique(array_merge($galleryImages,$productImages,$flatCatImages));
 
-        return $this->validateDbImages($databaseImages);
+        return $this->validateDbImages($databaseImages, $ouput);
 
 
     }
@@ -183,7 +183,8 @@ class Imageclean extends Command
                 if(!is_dir($path)){
                     $match=false;
                     foreach (self::ALLOWED_FILE_TYPES as $ext){
-                        if($this->endsWith(strtolower($path),$ext)){
+                        if($this->endsWith(strtolower($path),$ext)
+                            && strpos($path, 'product/cache/') === false){
                             $results[]=$path;
                         }
                     }
@@ -211,7 +212,7 @@ class Imageclean extends Command
         return $this->directoryList->getPath('media').'/catalog/product/';
     }
 
-    private function createListToDelete($localImages,$dbImages){
+    private function createListToDelete($localImages,$dbImages,$output){
 
         $dbImageFlip = array_flip( $dbImages );
         $deleteList = array();
@@ -227,14 +228,21 @@ class Imageclean extends Command
             }
         }
         printf( "Found %d image files to be deleted, using %d Mb\n", count( $deleteList ), $deleteSize );
+        if (count($deleteList)) {
+            foreach ($deleteList as $item) {
+                $output->writeln($item);
+            }
+            $output->writeln('---------------------------------------------');
+        }
         return $deleteList;
     }
 
 
-    private function validateDbImages($dbImages)
+    private function validateDbImages($dbImages, $output)
     {
         //We only want a list of files that are present in DB & Filesystem
         $countInvalid = 0;
+        $invalidFiles = [];
         $keys = array_keys($dbImages);
         foreach ( $keys as $key ) {
             $dbImages[$key] = trim( $dbImages[$key] );
@@ -244,11 +252,13 @@ class Imageclean extends Command
                 //Test if file exists
                 $fullPath = realpath( $this->imagesPath . $dbImages[$key] );
                 if ( false === $fullPath ) {
+                    $invalidFiles[] = $dbImages[$key];
                     unset( $dbImages[$key] );
                     $countInvalid++;
                 }
                 elseif ( 0 !== strpos( $fullPath, $this->imagesPath ) ) {
                     printf( "Warning: Image path outside image root used: '%s'.\n", $fullPath );
+                    $invalidFiles[] = $dbImages[$key];
                     unset( $dbImages[$key] );
                     $countInvalid++;
                 } else {
@@ -258,6 +268,12 @@ class Imageclean extends Command
         }
         $dbImages = array_unique( $dbImages );
         printf( "Found %d invalid images in database.\n", $countInvalid );
+        if (count($invalidFiles)) {
+            foreach ($invalidFiles as $item) {
+                $output->writeln($item);
+            }
+            $output->writeln('---------------------------------------------');
+        }
         printf( "Found %d valid images in database.\n", count( $dbImages ) );
         return $dbImages;
     }
@@ -281,8 +297,8 @@ class Imageclean extends Command
      */
     protected function configure()
     {
-        $this->setName("ekouk:cleanimages");
-        $this->setDescription("Removes unused images from pub/media/catalog");
+        $this->setName("ekouk:catalogcleanimages");
+        $this->setDescription("Removes unused catalog images from pub/media/catalog");
         $this->setDefinition([
             new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
             new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode")

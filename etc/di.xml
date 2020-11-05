@@ -3,8 +3,9 @@
 	<type name="Magento\Framework\Console\CommandList">
 		<arguments>
 			<argument name="commands" xsi:type="array">
-				<item name="imageclean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\Imageclean</item>
-				<item name="imagecorruptedclean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\ImageCorruptedClean</item>
+				<item name="catalog_image_clean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\CatalogImageclean</item>
+				<item name="image_corrupted_clean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\ImageCorruptedClean</item>
+                <item name="non_image_list" xsi:type="object">EkoUK\ImageCleaner\Console\Command\NonImageList</item>
 			</argument>
 		</arguments>
 	</type>

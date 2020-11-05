@@ -31,11 +31,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ResourceConnection;
 
-class ImageCorruptedClean extends Command
+class NonImageList extends Command
 {
 
-    const DELETE_MODE = "Delete Mode";
-    const LIST_MODE = "List Mode";
     const ALLOWED_FILE_TYPES = ['jpg','jpeg','png'];
 
     protected $io;
@@ -43,7 +41,6 @@ class ImageCorruptedClean extends Command
     protected $directoryList;
     protected $resourceConnection;
     protected $imagesPath;
-    protected $deleteMode;
     protected $showNotImageType;
     protected $db;
 
@@ -68,54 +65,27 @@ class ImageCorruptedClean extends Command
         OutputInterface $output
     ) {
 
-        $this->deleteMode = $input->getOption(self::DELETE_MODE);
-        $this->listMode = $input->getOption(self::LIST_MODE);
         $this->imagesPath = $this->getDir();
 
         $output->writeln("Checking Files In Directory: ".$this->imagesPath);
-        $localImages = $this->getCorruptedImagesFromDirectoryRecursive($this->imagesPath);
-        $output->writeln("Found ".count($localImages)." local corrupted image files");
-
-        $deleteList = $this->createListToDelete($localImages);
-
-        if($this->deleteMode){
-            $output->writeln("Deleting Files");
-            $this->deleteImages($deleteList);
-            $output->writeln("All Done");
-
-        } else {
-            $output->writeln("Test Mode Only - Nothing deleted");
-            if ($this->listMode) {
-                $this->listDeleteList($deleteList);
-            }
-        }
-
-
+        $localImages = $this->getNonImagesFromDirectoryRecursive($this->imagesPath, $output);
+        $output->writeln("Found ".count($localImages)." non-image files");
     }
 
-    private function getCorruptedImagesFromDirectoryRecursive($directory,&$results = []) {
+    private function getNonImagesFromDirectoryRecursive($directory, $output, &$results = []) {
         if ($directoryContents = $this->file->readDirectory($directory)) {
             foreach ($directoryContents as $key => $path) {
                 if(!is_dir($path)){
                     $match=false;
-                    foreach (self::ALLOWED_FILE_TYPES as $ext){
-                        if($this->endsWith(strtolower($path),$ext)
-                            && strpos($path, 'product/cache/') === false
-                        ){
-                            $fext = $ext;
-                            if ($fext == 'jpg') {
-                                $fext = 'jpeg';
-                            }
-                            $function = 'imagecreatefrom' . $fext;
-                            if (function_exists($function) && @$function($path) === FALSE) {
-                                $results[] = $path;
-                            }
-                        }
+                    if (!$this->endsWith(strtolower($path),'png')
+                        && !$this->endsWith(strtolower($path),'jpg')
+                        && !$this->endsWith(strtolower($path),'jpeg')) {
+                        $output->writeln($path);
                     }
 
                     if(!$match) unset($directoryContents[$key]);
                 } else if($path != "." && $path != ".." ){
-                    $this->getCorruptedImagesFromDirectoryRecursive($path,$results);
+                    $this->getNonImagesFromDirectoryRecursive($path, $output, $results);
                 }
             }
         }
@@ -136,46 +106,13 @@ class ImageCorruptedClean extends Command
         return $this->directoryList->getPath('media').'/';
     }
 
-    private function createListToDelete($localImages){
-
-        $deleteList = array();
-        $deleteSize = 0;
-        foreach ($localImages as $file){
-            if ( is_writable( $file ) ) {
-                $deleteList[] = $file;
-                $deleteSize += filesize( $file ) / 1024 / 1024; // Add in Mb
-            } else {
-                printf( "Warning: File '%s' is not writable, skipping.\n", $file );
-            }
-        }
-        printf( "Found %d corrupted image files to be deleted, using %d Mb\n", count( $deleteList ), $deleteSize );
-        return $deleteList;
-    }
-
-    private function deleteImages($deleteList){
-        foreach( $deleteList as $deleteFile ) {
-            unlink( $deleteFile );
-        }
-    }
-
-    private function listDeleteList($deleteList){
-        echo "Files marked for deletion:\n";
-        foreach( $deleteList as $deleteFile ) {
-            echo "$deleteFile\n";
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
-        $this->setName("ekouk:cleancorruptedimages");
-        $this->setDescription("Removes corrupted images from pub/media/");
-        $this->setDefinition([
-            new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
-            new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode")
-        ]);
+        $this->setName("ekouk:getnonimage");
+        $this->setDescription("List non-image files from pub/media/");
         parent::configure();
     }
 }
