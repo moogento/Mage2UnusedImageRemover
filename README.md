@@ -76,7 +76,7 @@ bin/magento ekouk:cleancorruptedimages -s
 
 Run in check only mode which will report the number and size in Mb of <strong>corrupted</strong> images in pub/media folder:
 ```
-bin/magento ekouk:cleancorruptedimages -s
+bin/magento ekouk:cleancorruptedimages -p
 ```
 
 Run and delete <strong>corrupted</strong> images:
