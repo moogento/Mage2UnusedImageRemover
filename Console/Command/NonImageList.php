@@ -34,7 +34,7 @@ use Magento\Framework\App\ResourceConnection;
 class NonImageList extends Command
 {
 
-    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png'];
+    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','gif','webp','svg'];
 
     protected $io;
     protected $file;
@@ -67,7 +67,7 @@ class NonImageList extends Command
 
         $this->imagesPath = $this->getDir();
 
-        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
+        $output->writeln("Checking files in directory: ".$this->imagesPath);
         $localImages = $this->getNonImagesFromDirectoryRecursive($this->imagesPath, $output);
         $output->writeln("Found ".count($localImages)." non-image files");
     }
@@ -77,7 +77,11 @@ class NonImageList extends Command
             foreach ($directoryContents as $key => $path) {
                 if(!is_dir($path)){
                     $match=false;
+                    
                     if (!$this->endsWith(strtolower($path),'png')
+                        && !$this->endsWith(strtolower($path),'gif')
+                        && !$this->endsWith(strtolower($path),'svg')
+                        && !$this->endsWith(strtolower($path),'webp')
                         && !$this->endsWith(strtolower($path),'jpg')
                         && !$this->endsWith(strtolower($path),'jpeg')) {
                         $output->writeln($path);

@@ -36,7 +36,7 @@ class ImageCorruptedClean extends Command
 
     const DELETE_MODE = "Delete Mode";
     const LIST_MODE = "List Mode";
-    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png'];
+    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','gif','webp','svg'];
 
     protected $io;
     protected $file;
@@ -72,19 +72,19 @@ class ImageCorruptedClean extends Command
         $this->listMode = $input->getOption(self::LIST_MODE);
         $this->imagesPath = $this->getDir();
 
-        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
+        $output->writeln("Checking files in directory: ".$this->imagesPath);
         $localImages = $this->getCorruptedImagesFromDirectoryRecursive($this->imagesPath);
         $output->writeln("Found ".count($localImages)." local corrupted image files");
 
         $deleteList = $this->createListToDelete($localImages);
 
         if($this->deleteMode){
-            $output->writeln("Deleting Files");
+            $output->writeln("Deleting files..");
             $this->deleteImages($deleteList);
-            $output->writeln("All Done");
+            $output->writeln("All done");
 
         } else {
-            $output->writeln("Test Mode Only - Nothing deleted");
+            $output->writeln("Test mode - nothing deleted");
             if ($this->listMode) {
                 $this->listDeleteList($deleteList);
             }
@@ -148,7 +148,7 @@ class ImageCorruptedClean extends Command
                 printf( "Warning: File '%s' is not writable, skipping.\n", $file );
             }
         }
-        printf( "Found %d corrupted image files to be deleted, using %d Mb\n", count( $deleteList ), $deleteSize );
+        printf( "Found %d corrupt image files to be deleted, using %d Mb\n", count( $deleteList ), $deleteSize );
         return $deleteList;
     }
 
@@ -171,7 +171,7 @@ class ImageCorruptedClean extends Command
     protected function configure()
     {
         $this->setName("ekouk:cleancorruptedimages");
-        $this->setDescription("Removes corrupted images from pub/media/");
+        $this->setDescription("Removes corrupt images from pub/media/");
         $this->setDefinition([
             new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
             new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode")
