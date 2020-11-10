@@ -81,7 +81,7 @@ bin/magento ekouk:cleancorruptedimages -d
 
 <strong>c) Find non-image files in <i>pub/media</i></strong>
 
-• List mode : list non-images files:
+• List mode : list non-image files:
 ```
 bin/magento ekouk:getnonimage
 ```
@@ -89,13 +89,13 @@ bin/magento ekouk:getnonimage
 Notes
 -----
 
-This module will only remove jpg, png, jpeg images from pub/media/catalog/product which are not referenced in the database.
-The default function without any switches will just report on unused files and NOT delete anything
+This module will remove jpg, png, jpeg images from pub/media/catalog/product which are not referenced in the database.
+The default function without any switches will just report on unused files and will NOT delete anything.
 You must use the -d switch to remove files.
 
 This module is provided free of charge with no warranty. 
 
-<strong>Please ensure you have a backup copy of your ```pub/media``` directory</strong>  just in case anything does go wrong.
+<strong>Please ensure you have a backup copy of your ```pub/media``` directory</strong> just in case anything does go wrong.
 
 
 Support
