@@ -31,15 +31,16 @@ Then run:
 composer require ekouk/imagecleaner:dev-corrupted
 ```
 
-or add:
+or add, to the require section of your `composer.json` file:
 
 ```
 "ekouk/imagecleaner": "dev-corrupted"
 ```
 
-to the require section of your `composer.json` file.
 
-Then run ``composer install``.
+Then run:
+
+``composer install``
 
 Once the files have been installed to vendor/ekouk/imagecleaner,
 
@@ -52,29 +53,38 @@ bin/magento cache:flush
 ```
 
 Usage
------
+=====
 
-Run in check only mode which will report the number and size in Mb of unused <strong>catalog</strong> images:
+a) Find un-used product images in <strong>pub/media/catalog</strong>
+--------------------------------------------------------------------
+
+Check-only mode : summarise the number and size of un-used images:
 ```
 bin/magento ekouk:catalogcleanimages
 ```
 
-Run and delete unused <strong>catalog</strong> images:
+Delete mode : remove un-used images:
 ```
 bin/magento ekouk:catalogcleanimages -d
 ```
 
-Run in check only mode which will report the number and size in Mb of <strong>corrupted</strong> images in pub/media folder:
+b) Find corrupt images in <strong>pub/media</strong>
+----------------------------------------------------
+
+Check-only mode : summarise the number and size of corrupt images:
 ```
 bin/magento ekouk:cleancorruptedimages
 ```
 
-Run and delete <strong>corrupted</strong> images:
+Delete mode : remove corrupt images:
 ```
 bin/magento ekouk:cleancorruptedimages -d
 ```
 
-Run in check only mode which will list all <strong>Non-image</strong> files in pub/media folder:
+c) Find non-image files in <strong>pub/media</strong>
+-----------------------------------------------------
+
+List mode : list non-images files:
 ```
 bin/magento ekouk:getnonimage
 ```
@@ -88,7 +98,7 @@ You must use the -d switch to remove files.
 
 This module is provided free of charge with no warranty. 
 
-<strong>Please ensure you have a backup copy of your ```pub/media/catalog``` directory</strong>  just in case anything does go wrong.
+<strong>Please ensure you have a backup copy of your ```pub/media``` directory</strong>  just in case anything does go wrong.
 
 
 Support
