@@ -36,7 +36,7 @@ class ImageCorruptedClean extends Command
 
     const DELETE_MODE = "Delete Mode";
     const LIST_MODE = "List Mode";
-    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','gif','webp','svg'];
+    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','webp','gif'];
 
     protected $io;
     protected $file;
@@ -44,8 +44,7 @@ class ImageCorruptedClean extends Command
     protected $resourceConnection;
     protected $imagesPath;
     protected $deleteMode;
-    protected $showNotImageType;
-    protected $db;
+    protected $listMode;
 
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $file,
@@ -72,25 +71,29 @@ class ImageCorruptedClean extends Command
         $this->listMode = $input->getOption(self::LIST_MODE);
         $this->imagesPath = $this->getDir();
 
-        $output->writeln("Checking files in directory: ".$this->imagesPath);
+        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
+        $this->getAttachVectorPhp($this->imagesPath);
         $localImages = $this->getCorruptedImagesFromDirectoryRecursive($this->imagesPath);
         $output->writeln("Found ".count($localImages)." local corrupted image files");
 
         $deleteList = $this->createListToDelete($localImages);
 
         if($this->deleteMode){
-            $output->writeln("Deleting files..");
+            $output->writeln("Deleting Files");
             $this->deleteImages($deleteList);
-            $output->writeln("All done");
+            $output->writeln("All Done");
 
         } else {
-            $output->writeln("Test mode - nothing deleted");
+            $output->writeln("Test Mode Only - Nothing deleted");
             if ($this->listMode) {
                 $this->listDeleteList($deleteList);
             }
         }
+    }
 
-
+    private function getAttachVectorPhp($directory) {
+        $output = shell_exec('grep -l -R "\(eval\|base64_decode\|shell_exec\|error_reporting\(0\)\|gzinflate(base64_decode\|eval\|shell_exec\|error_reporting\(0\)(gzinflate(base64_decode\|eval(base64_decode\)" ' . $directory);
+        echo $output;
     }
 
     private function getCorruptedImagesFromDirectoryRecursive($directory,&$results = []) {

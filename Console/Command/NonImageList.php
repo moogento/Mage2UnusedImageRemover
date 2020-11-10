@@ -34,15 +34,13 @@ use Magento\Framework\App\ResourceConnection;
 class NonImageList extends Command
 {
 
-    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','gif','webp','svg'];
+    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','webp','gif','svg'];
 
     protected $io;
     protected $file;
     protected $directoryList;
     protected $resourceConnection;
     protected $imagesPath;
-    protected $showNotImageType;
-    protected $db;
 
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $file,
@@ -67,7 +65,7 @@ class NonImageList extends Command
 
         $this->imagesPath = $this->getDir();
 
-        $output->writeln("Checking files in directory: ".$this->imagesPath);
+        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
         $localImages = $this->getNonImagesFromDirectoryRecursive($this->imagesPath, $output);
         $output->writeln("Found ".count($localImages)." non-image files");
     }
@@ -77,13 +75,7 @@ class NonImageList extends Command
             foreach ($directoryContents as $key => $path) {
                 if(!is_dir($path)){
                     $match=false;
-                    
-                    if (!$this->endsWith(strtolower($path),'png')
-                        && !$this->endsWith(strtolower($path),'gif')
-                        && !$this->endsWith(strtolower($path),'svg')
-                        && !$this->endsWith(strtolower($path),'webp')
-                        && !$this->endsWith(strtolower($path),'jpg')
-                        && !$this->endsWith(strtolower($path),'jpeg')) {
+                    if (!$this->endsWith(strtolower($path), self::ALLOWED_FILE_TYPES)) {
                         $output->writeln($path);
                     }
 
@@ -96,13 +88,20 @@ class NonImageList extends Command
         return $results;
     }
 
-    protected function endsWith($haystack, $needle)
+    /**
+     * @param $haystack
+     * @param $needles
+     * @return bool
+     */
+    protected function endsWith($haystack, $needles)
     {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
+        foreach ($needles as $needle) {
+            $length = strlen($needle);
+            if ((substr($haystack, -$length) === $needle)) {
+                return true;
+            }
         }
-        return (substr($haystack, -$length) === $needle);
+        return false;
     }
 
     protected function getDir()
