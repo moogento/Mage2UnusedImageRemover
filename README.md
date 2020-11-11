@@ -47,6 +47,7 @@ Once the files have been installed to vendor/ekouk/imagecleaner,
 enable the module:-
 
 ```
+bin/magento module:enable EkoUK_ImageCleaner
 bin/magento setup:upgrade
 bin/magento setup:di:compile
 bin/magento cache:flush
