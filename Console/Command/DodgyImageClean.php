@@ -34,28 +34,22 @@ use Magento\Framework\App\ResourceConnection;
 class DodgyImageClean extends Command
 {
 
-    const DELETE_MODE = "Delete Mode";
     const LIST_MODE = "List Mode";
-    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','gif','webp','svg'];
 
     protected $io;
     protected $file;
     protected $directoryList;
-    protected $resourceConnection;
     protected $imagesPath;
-    protected $deleteMode;
     protected $listMode;
 
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $file,
         \Magento\Framework\Filesystem\Io\File $io,
-        DirectoryList $directoryList,
-        ResourceConnection $resourceConnection
+        DirectoryList $directoryList
     ){
         $this->io = $io;
         $this->file = $file;
         $this->directoryList = $directoryList;
-        $this->resourceConnection = $resourceConnection;
         parent::__construct();
     }
 
@@ -66,72 +60,24 @@ class DodgyImageClean extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-
-        $this->deleteMode = $input->getOption(self::DELETE_MODE);
         $this->listMode = $input->getOption(self::LIST_MODE);
         $this->imagesPath = $this->getDir();
 
         $output->writeln("Checking Files In Directory: ".$this->imagesPath);
-        $this->getAttachVectorPhp($this->imagesPath);
-        $localImages = $this->getCorruptedImagesFromDirectoryRecursive($this->imagesPath);
+        $localImages = $this->getAttachVectorPhp($this->imagesPath);
         $output->writeln("Found ".count($localImages)." dodgy image files ! Check the contents before deleting !");
 
         $deleteList = $this->createListToDelete($localImages);
 
-        if($this->deleteMode){
-            $output->writeln("Deleting Files");
-            $this->deleteImages($deleteList);
-            $output->writeln("All Done");
-
-        } else {
-            $output->writeln("Test Mode Only - Nothing deleted");
-            if ($this->listMode) {
-                $this->listDeleteList($deleteList);
-            }
+        $output->writeln("Test Mode Only - Nothing deleted");
+        if ($this->listMode) {
+            $this->listDeleteList($deleteList);
         }
     }
 
     private function getAttachVectorPhp($directory) {
-        $output = shell_exec('grep -l -R "\(eval\|base64_decode\|shell_exec\|error_reporting\(0\)\|gzinflate(base64_decode\|eval\|shell_exec\|error_reporting\(0\)(gzinflate(base64_decode\|eval(base64_decode\)" ' . $directory);
-        echo $output;
-    }
-
-    private function getCorruptedImagesFromDirectoryRecursive($directory,&$results = []) {
-        if ($directoryContents = $this->file->readDirectory($directory)) {
-            foreach ($directoryContents as $key => $path) {
-                if(!is_dir($path)){
-                    $match=false;
-                    foreach (self::ALLOWED_FILE_TYPES as $ext){
-                        if($this->endsWith(strtolower($path),$ext)
-                            && strpos($path, 'product/cache/') === false
-                        ){
-                            $fext = $ext;
-                            if ($fext == 'jpg') {
-                                $fext = 'jpeg';
-                            }
-                            $function = 'imagecreatefrom' . $fext;
-                            if (function_exists($function) && @$function($path) === FALSE) {
-                                $results[] = $path;
-                            }
-                        }
-                    }
-
-                    if(!$match) unset($directoryContents[$key]);
-                } else if($path != "." && $path != ".." ){
-                    $this->getCorruptedImagesFromDirectoryRecursive($path,$results);
-                }
-            }
-        }
-        return $results;
-    }
-
-    protected function endsWith($haystack, $needle)
-    {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-        return (substr($haystack, -$length) === $needle);
+        $exec = exec('grep -l -R "\(eval\|base64_decode\|shell_exec\|error_reporting\(0\)\|gzinflate(base64_decode\|eval\|shell_exec\|error_reporting\(0\)(gzinflate(base64_decode\|eval(base64_decode\)" ' . $directory, $output);
+        return $output;
     }
 
     protected function getDir()
@@ -155,12 +101,6 @@ class DodgyImageClean extends Command
         return $deleteList;
     }
 
-    // private function deleteImages($deleteList){
-    //     foreach( $deleteList as $deleteFile ) {
-    //         unlink( $deleteFile );
-    //     }
-    // }
-
     private function listDeleteList($deleteList){
         echo "Files marked for checking:\n";
         foreach( $deleteList as $deleteFile ) {
@@ -176,7 +116,6 @@ class DodgyImageClean extends Command
         $this->setName("ekouk:dodgycleanimages");
         $this->setDescription("List and remove corrupt images from pub/media");
         $this->setDefinition([
-            // new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
             new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode")
         ]);
         parent::configure();
