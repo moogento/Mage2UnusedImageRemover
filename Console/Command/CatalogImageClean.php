@@ -72,7 +72,7 @@ class CatalogImageClean extends Command
         $this->imagesPath = $this->getCatalogDir();
         $this->db         = $this->resourceConnection->getConnection();
 
-        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
+        $output->writeln("Checking files in folder: ".$this->imagesPath);
         $localImages = $this->getImagesFromDirectoryRecursive($this->imagesPath);
         $output->writeln("Found ".count($localImages)." image files in /pub/media/catalog/product that aren't linked to a Magento product");
 
@@ -86,7 +86,7 @@ class CatalogImageClean extends Command
             $output->writeln("All Done");
 
         } else {
-            $output->writeln("Test Mode Only - Nothing deleted");
+            $output->writeln("List mode only - nothing deleted");
             if ($this->listMode) {
                 $this->listDeleteList($deleteList);
             }

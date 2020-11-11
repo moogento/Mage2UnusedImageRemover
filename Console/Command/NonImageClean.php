@@ -65,7 +65,7 @@ class NonImageClean extends Command
 
         $this->imagesPath = $this->getDir();
 
-        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
+        $output->writeln("Checking files in folder: ".$this->imagesPath);
         $localImages = $this->getNonImagesFromDirectoryRecursive($this->imagesPath, $output);
         $output->writeln("Found ".count($localImages)." non-image files");
     }

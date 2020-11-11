@@ -63,13 +63,13 @@ class DodgyImageClean extends Command
         $this->listMode = $input->getOption(self::LIST_MODE);
         $this->imagesPath = $this->getDir();
 
-        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
+        $output->writeln("Checking files in folder: ".$this->imagesPath);
         $localImages = $this->getAttachVectorPhp($this->imagesPath);
         $output->writeln("Found ".count($localImages)." dodgy image files ! Check the contents before deleting !");
 
         $deleteList = $this->createListToDelete($localImages);
 
-        $output->writeln("Test Mode Only - Nothing deleted");
+        $output->writeln("List mode only - nothing deleted");
         if ($this->listMode) {
             $this->listDeleteList($deleteList);
         }

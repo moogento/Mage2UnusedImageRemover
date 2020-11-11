@@ -71,7 +71,7 @@ class CorruptImageClean extends Command
         $this->listMode = $input->getOption(self::LIST_MODE);
         $this->imagesPath = $this->getDir();
 
-        $output->writeln("Checking Files In Directory: ".$this->imagesPath);
+        $output->writeln("Checking files in folder: ".$this->imagesPath);
         $localImages = $this->getCorruptedImagesFromDirectoryRecursive($this->imagesPath);
         $output->writeln("Found ".count($localImages)." corrupted image files");
 
@@ -83,7 +83,7 @@ class CorruptImageClean extends Command
             $output->writeln("All Done");
 
         } else {
-            $output->writeln("Test Mode Only - Nothing deleted");
+            $output->writeln("List mode only - nothing deleted");
             if ($this->listMode) {
                 $this->listDeleteList($deleteList);
             }
