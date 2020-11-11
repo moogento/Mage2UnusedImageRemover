@@ -36,7 +36,7 @@ class CatalogImageClean extends Command
 
     const DELETE_MODE = "Delete Mode";
     const LIST_MODE = "List Mode";
-    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png'];
+    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','gif','webp'];
 
     protected $io;
     protected $file;
@@ -74,7 +74,7 @@ class CatalogImageClean extends Command
 
         $output->writeln("Checking Files In Directory: ".$this->imagesPath);
         $localImages = $this->getImagesFromDirectoryRecursive($this->imagesPath);
-        $output->writeln("Found ".count($localImages)." local image files");
+        $output->writeln("Found ".count($localImages)." image files in /pub/media/catalog/product that aren't linked to a Magento product");
 
         $dbImages = $this->getImagesFromDatabase($output);
 
@@ -298,7 +298,7 @@ class CatalogImageClean extends Command
     protected function configure()
     {
         $this->setName("ekouk:catalogcleanimages");
-        $this->setDescription("Removes unused catalog images from pub/media/catalog");
+        $this->setDescription("Removes unused catalog images from pub/media/catalog/product");
         $this->setDefinition([
             new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
             new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode")

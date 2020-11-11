@@ -55,7 +55,7 @@ bin/magento cache:flush
 Usage
 -----
 
-<strong>a) Find un-used product images in <i>pub/media/catalog</i></strong>
+<strong>a) Find un-used product images in <i>pub/media/catalog/product</i></strong>
 
 • Check-only mode : summarise the number and size of un-used images:
 ```
@@ -71,19 +71,26 @@ bin/magento ekouk:catalogcleanimages -d
 
 • Check-only mode : summarise the number and size of corrupt images:
 ```
-bin/magento ekouk:cleancorruptedimages
+bin/magento ekouk:corruptcleanimages
 ```
 
 • Delete mode : remove corrupt images:
 ```
-bin/magento ekouk:cleancorruptedimages -d
+bin/magento ekouk:corruptcleanimages -d
 ```
 
 <strong>c) Find non-image files in <i>pub/media</i></strong>
 
 • List mode : list non-image files:
 ```
-bin/magento ekouk:getnonimage
+bin/magento ekouk:nonimagecleanimages
+```
+
+<strong>d) Find image files with dodgy contents in <i>pub/media</i></strong>
+
+• List mode : list dodgy image files:
+```
+bin/magento ekouk:dodgycleanimages
 ```
 
 Notes

@@ -31,12 +31,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ResourceConnection;
 
-class ImageCorruptedClean extends Command
+class DodgyImageClean extends Command
 {
 
     const DELETE_MODE = "Delete Mode";
     const LIST_MODE = "List Mode";
-    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','webp','gif'];
+    const ALLOWED_FILE_TYPES = ['jpg','jpeg','png','gif','webp','svg'];
 
     protected $io;
     protected $file;
@@ -74,7 +74,7 @@ class ImageCorruptedClean extends Command
         $output->writeln("Checking Files In Directory: ".$this->imagesPath);
         $this->getAttachVectorPhp($this->imagesPath);
         $localImages = $this->getCorruptedImagesFromDirectoryRecursive($this->imagesPath);
-        $output->writeln("Found ".count($localImages)." local corrupted image files");
+        $output->writeln("Found ".count($localImages)." dodgy image files ! Check the contents before deleting !");
 
         $deleteList = $this->createListToDelete($localImages);
 
@@ -151,18 +151,18 @@ class ImageCorruptedClean extends Command
                 printf( "Warning: File '%s' is not writable, skipping.\n", $file );
             }
         }
-        printf( "Found %d corrupt image files to be deleted, using %d Mb\n", count( $deleteList ), $deleteSize );
+        printf( "Found %d dodgy image files to be checked, using %d Mb\n", count( $deleteList ), $deleteSize );
         return $deleteList;
     }
 
-    private function deleteImages($deleteList){
-        foreach( $deleteList as $deleteFile ) {
-            unlink( $deleteFile );
-        }
-    }
+    // private function deleteImages($deleteList){
+    //     foreach( $deleteList as $deleteFile ) {
+    //         unlink( $deleteFile );
+    //     }
+    // }
 
     private function listDeleteList($deleteList){
-        echo "Files marked for deletion:\n";
+        echo "Files marked for checking:\n";
         foreach( $deleteList as $deleteFile ) {
             echo "$deleteFile\n";
         }
@@ -173,10 +173,10 @@ class ImageCorruptedClean extends Command
      */
     protected function configure()
     {
-        $this->setName("ekouk:cleancorruptedimages");
-        $this->setDescription("Removes corrupt images from pub/media/");
+        $this->setName("ekouk:corruptcleanimages");
+        $this->setDescription("List and remove corrupt images from pub/media");
         $this->setDefinition([
-            new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
+            // new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
             new InputOption(self::LIST_MODE, "-l", InputOption::VALUE_NONE, "List Mode")
         ]);
         parent::configure();

@@ -4,8 +4,9 @@
 		<arguments>
 			<argument name="commands" xsi:type="array">
 				<item name="catalog_image_clean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\CatalogImageClean</item>
-				<item name="image_corrupted_clean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\ImageCorruptedClean</item>
-                <item name="non_image_list" xsi:type="object">EkoUK\ImageCleaner\Console\Command\NonImageList</item>
+				<item name="corrupt_image_clean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\CorruptImageClean</item>
+                <item name="non_image_image_clean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\NonImageClean</item>
+                <item name="dodgy_image_clean" xsi:type="object">EkoUK\ImageCleaner\Console\Command\DodgyImageClean</item>
 			</argument>
 		</arguments>
 	</type>
