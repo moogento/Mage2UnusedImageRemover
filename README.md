@@ -28,13 +28,13 @@ or adding:
 Then run:
 
 ```
-composer require ekouk/imagecleaner:dev-corrupted
+composer require ekouk/imagecleaner:dev-master
 ```
 
 or add, to the require section of your `composer.json` file:
 
 ```
-"ekouk/imagecleaner": "dev-corrupted"
+"ekouk/imagecleaner": "dev-master"
 ```
 
 
