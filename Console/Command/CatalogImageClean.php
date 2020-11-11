@@ -228,12 +228,6 @@ class CatalogImageClean extends Command
             }
         }
         printf( "Found %d image files to be deleted, using %d Mb\n", count( $deleteList ), $deleteSize );
-        if (count($deleteList)) {
-            foreach ($deleteList as $item) {
-                $output->writeln($item);
-            }
-            $output->writeln('---------------------------------------------');
-        }
         return $deleteList;
     }
 
