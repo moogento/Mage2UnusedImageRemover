@@ -173,7 +173,7 @@ class DodgyImageClean extends Command
      */
     protected function configure()
     {
-        $this->setName("ekouk:corruptcleanimages");
+        $this->setName("ekouk:dodgycleanimages");
         $this->setDescription("List and remove corrupt images from pub/media");
         $this->setDefinition([
             // new InputOption(self::DELETE_MODE, "-d", InputOption::VALUE_NONE, "Delete Mode"),
